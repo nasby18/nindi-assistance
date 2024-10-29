@@ -191,7 +191,10 @@
                 removeLoadingMessage();  // Remove loading indicator
 
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.statusText}`);
+                    const errorData = await response.json();
+                    console.error("Server Error:", errorData);  // Log server-side error details
+                    createMessage("I'm sorry, there was an error with the server. Please try again later.", false);
+                    return;
                 }
 
                 const data = await response.json();
@@ -203,7 +206,7 @@
                     createMessage("No answer available. Please try again.", false);
                 }
             } catch (error) {
-                console.error("Connection error:", error);
+                console.error("Connection error:", error.message, error.stack);  // Capture more details
                 removeLoadingMessage();
                 createMessage("Sorry, there was an error connecting to the server. Check console for details.", false);
             }
