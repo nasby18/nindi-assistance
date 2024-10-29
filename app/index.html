@@ -24,7 +24,7 @@
 
         .chat-container {
             width: 400px;
-            height: 600px;
+            height: 650px;
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -41,6 +41,20 @@
             text-align: center;
             font-size: 18px;
             font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Language selector styling */
+        .language-select {
+            font-size: 14px;
+            color: #4f46e5;
+            background-color: #ffffff;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         /* Chat messages area styling */
@@ -111,7 +125,13 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">Nindi Assistance</div>
+        <div class="chat-header">
+            Nindi Assistance
+            <select id="language-select" class="language-select">
+                <option value="english">English</option>
+                <option value="swahili">Kiswahili</option>
+            </select>
+        </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input">
             <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
@@ -150,6 +170,7 @@
         async function sendMessage() {
             const userInput = document.getElementById("user-input");
             const userMessage = userInput.value.trim();
+            const language = document.getElementById("language-select").value;
 
             if (!userMessage) return;
 
@@ -174,7 +195,7 @@
                 }
 
                 const data = await response.json();
-                const botMessage = data.answer || "I'm sorry, I couldn't understand that.";
+                const botMessage = language === "swahili" ? data.answer_swahili : data.answer_english;
 
                 createMessage(botMessage, false);  // Display bot's response
             } catch (error) {
