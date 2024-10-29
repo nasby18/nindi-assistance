@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nindi Assistance Chatbot</title>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Chat container styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header styling */
+        .chat-header {
+            background-color: #4f46e5;
+            color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Chat messages area styling */
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            max-width: 75%;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background-color: #e5e7eb;
+            align-self: flex-end;
+            color: #111827;
+        }
+
+        .bot-message {
+            background-color: #4f46e5;
+            color: #ffffff;
+            align-self: flex-start;
+        }
+
+        /* Input area styling */
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            background-color: #4f46e5;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin-left: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Nindi Assistance</div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Correct backend URL for chatbot endpoint
+        const backendUrl = "https://nindi-assistance.onrender.com/chatbot";
+
+        // Function to create message bubbles
+        function createMessage(text, isUser = false) {
+            const message = document.createElement("div");
+            message.classList.add("message");
+            message.classList.add(isUser ? "user-message" : "bot-message");
+            message.textContent = text;
+            document.getElementById("chat-messages").appendChild(message);
+
+            // Scroll to the bottom for new messages
+            document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
+        }
+
+        // Function to send a message to the backend
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input");
+            const userMessage = userInput.value.trim();
+
+            // Check if input is empty
+            if (!userMessage) return;
+
+            // Display the user's message in the chat
+            createMessage(userMessage, true);
+
+            // Clear input field
+            userInput.value = "";
+
+            // Send the message to the backend
+            try {
+                const response = await fetch(backendUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ question: userMessage })
+                });
+
+                // Get the response data from the backend
+                const data = await response.json();
+                const botMessage = data.answer || "I'm sorry, I couldn't understand that.";
+
+                // Display the bot's response
+                createMessage(botMessage, false);
+            } catch (error) {
+                console.error("Error:", error);
+                createMessage("Sorry, there was an error connecting to the server.", false);
+            }
+        }
+
+        // Send message on Enter key press
+        document.getElementById("user-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
