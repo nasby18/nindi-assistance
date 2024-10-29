@@ -43,33 +43,33 @@ predefined_answers = {
     "What are the main components of IoT?": {
         "english": (
             "The main components of IoT include:\n"
-            "- **Sensors and Devices**: These collect data from the environment, such as temperature or motion sensors.\n"
-            "- **Connectivity**: IoT devices connect to each other and to the cloud via various communication methods, like Wi-Fi, Bluetooth, or cellular networks.\n"
-            "- **Data Processing**: This involves analyzing collected data to derive meaningful insights, often done in the cloud or on the device.\n"
-            "- **User Interface**: This allows users to interact with IoT systems, typically through mobile apps or web applications."
+            "- Sensors and Devices**: These collect data from the environment, such as temperature or motion sensors.\n"
+            "- Connectivity: IoT devices connect to each other and to the cloud via various communication methods, like Wi-Fi, Bluetooth, or cellular networks.\n"
+            "- Data Processing: This involves analyzing collected data to derive meaningful insights, often done in the cloud or on the device.\n"
+            "- User Interface: This allows users to interact with IoT systems, typically through mobile apps or web applications."
         ),
         "swahili": (
             "Vipengele vikuu vya IoT ni pamoja na:\n"
-            "- **Vihisio na Vifaa**: Hivi hukusanya data kutoka kwa mazingira, kama vihisio vya joto au mwendo.\n"
-            "- **Muunganisho**: Vifaa vya IoT huunganishwa kati yao na na wingu kupitia njia mbalimbali za mawasiliano, kama Wi-Fi, Bluetooth, au mtandao wa simu.\n"
-            "- **Usindikaji wa Data**: Hii inahusisha uchambuzi wa data zilizokusanywa ili kupata maarifa muhimu, mara nyingi hufanywa kwenye wingu au kwenye kifaa chenyewe.\n"
-            "- **Kiolesura cha Mtumiaji**: Hii inaruhusu watumiaji kuingiliana na mifumo ya IoT, kawaida kupitia programu za simu au wavuti."
+            "- Vihisio na Vifaa: Hivi hukusanya data kutoka kwa mazingira, kama vihisio vya joto au mwendo.\n"
+            "- Muunganisho: Vifaa vya IoT huunganishwa kati yao na na wingu kupitia njia mbalimbali za mawasiliano, kama Wi-Fi, Bluetooth, au mtandao wa simu.\n"
+            "- Usindikaji wa Data: Hii inahusisha uchambuzi wa data zilizokusanywa ili kupata maarifa muhimu, mara nyingi hufanywa kwenye wingu au kwenye kifaa chenyewe.\n"
+            "- Kiolesura cha Mtumiaji: Hii inaruhusu watumiaji kuingiliana na mifumo ya IoT, kawaida kupitia programu za simu au wavuti."
         ),
     },
     "What are some applications of IoT?": {
         "english": (
             "Applications of IoT include:\n"
-            "- **Smart Homes**: IoT devices can control lighting, temperature, and security systems.\n"
-            "- **Healthcare**: Wearable devices monitor patient health in real-time.\n"
-            "- **Agriculture**: Sensors monitor soil quality and crop growth.\n"
-            "- **Industrial Automation**: Machines and equipment are monitored for performance and maintenance needs."
+            "- Smart Homes: IoT devices can control lighting, temperature, and security systems.\n"
+            "- Healthcare: Wearable devices monitor patient health in real-time.\n"
+            "- Agriculture: Sensors monitor soil quality and crop growth.\n"
+            "- Industrial Automation: Machines and equipment are monitored for performance and maintenance needs."
         ),
         "swahili": (
             "Matumizi ya IoT ni pamoja na:\n"
-            "- **Nyumba za Kisasa**: Vifaa vya IoT vinaweza kudhibiti mwanga, joto, na mifumo ya usalama.\n"
-            "- **Afya**: Vifaa vya kuvaa hufuatilia afya ya mgonjwa kwa wakati halisi.\n"
-            "- **Kilimo**: Vihisio hufuatilia ubora wa udongo na ukuaji wa mazao.\n"
-            "- **Automatiki za Viwanda**: Mashine na vifaa hufuatiliwa kwa utendaji na mahitaji ya matengenezo."
+            "- Nyumba za Kisasa: Vifaa vya IoT vinaweza kudhibiti mwanga, joto, na mifumo ya usalama.\n"
+            "- Afya: Vifaa vya kuvaa hufuatilia afya ya mgonjwa kwa wakati halisi.\n"
+            "- Kilimo: Vihisio hufuatilia ubora wa udongo na ukuaji wa mazao.\n"
+            "- Automatiki za Viwanda: Mashine na vifaa hufuatiliwa kwa utendaji na mahitaji ya matengenezo."
         ),
     },
     # Additional questions here...
