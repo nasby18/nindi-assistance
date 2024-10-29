@@ -2,13 +2,30 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 from pydantic import BaseModel
+import logging
 
 # Hugging Face API configuration
 HF_API_KEY = "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"
 headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 url = "https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-1.3B"
 
-# Predefined question-answer dictionary for common IoT questions with English and Kiswahili translations
+# Initialize FastAPI app
+app = FastAPI()
+
+# Configure CORS to allow cross-origin requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://nindi-assistance.onrender.com"],  # Allow all origins for testing; specify domains in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Define predefined answers in English and Swahili
 predefined_answers = {
     "What is IoT?": {
         "english": (
@@ -41,18 +58,6 @@ predefined_answers = {
     # Add more questions and answers here...
 }
 
-# Initialize FastAPI app
-app = FastAPI()
-
-# Configure CORS to allow cross-origin requests
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://nindi-assistance.onrender.com"],  # Explicitly set the origin
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the IoT Chatbot API!"}
@@ -75,23 +80,32 @@ def get_chatbot_response(input_text):
             "answer_swahili": predefined_answers[input_text]["swahili"]
         }
 
-    # If no predefined answer, fall back to the model for English response and translate to Swahili if needed
+    # If no predefined answer, use GPT model to generate a response
     prompt = f"Explain in detail: {input_text}. Describe its components, applications, and give examples if possible."
-    response = requests.post(url, headers=headers, json={"inputs": prompt})
-    response_data = response.json()
+    try:
+        response = requests.post(url, headers=headers, json={"inputs": prompt}, timeout=10)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        response_data = response.json()
 
-    if isinstance(response_data, list) and "generated_text" in response_data[0]:
-        english_response = response_data[0]["generated_text"]
-        # Placeholder for Swahili translation
-        swahili_response = translate_to_swahili(english_response)
+        # Extract the generated text or return a default message
+        if isinstance(response_data, list) and "generated_text" in response_data[0]:
+            english_response = response_data[0]["generated_text"]
+            swahili_response = translate_to_swahili(english_response)  # Placeholder translation function
+            return {
+                "answer_english": english_response,
+                "answer_swahili": swahili_response
+            }
+        else:
+            logger.warning("Unexpected response format from GPT model")
+            return {
+                "answer_english": "I'm not sure how to respond.",
+                "answer_swahili": "Samahani, sijaelewa jinsi ya kujibu."
+            }
+    except requests.RequestException as e:
+        logger.error(f"Error connecting to Hugging Face API: {e}")
         return {
-            "answer_english": english_response,
-            "answer_swahili": swahili_response
-        }
-    else:
-        return {
-            "answer_english": "I'm not sure how to respond.",
-            "answer_swahili": "Samahani, sijaelewa jinsi ya kujibu."
+            "answer_english": "I'm sorry, there was an error with the server. Please try again later.",
+            "answer_swahili": "Samahani, kumekuwa na hitilafu kwa upande wa seva. Tafadhali jaribu tena baadaye."
         }
 
 # Placeholder function to handle English to Swahili translation
@@ -108,5 +122,5 @@ def chatbot_endpoint(request: ChatRequest):
         answers = get_chatbot_response(request.question)
         return answers
     except Exception as e:
-        # Return error details if any issue occurs
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Unexpected error in chatbot endpoint: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while processing the request.")
