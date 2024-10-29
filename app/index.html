@@ -185,7 +185,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ question: userMessage })
+                    body: JSON.stringify({ question: userMessage })  // Corrected key
                 });
 
                 removeLoadingMessage();  // Remove loading indicator
@@ -197,11 +197,15 @@
                 const data = await response.json();
                 const botMessage = language === "swahili" ? data.answer_swahili : data.answer_english;
 
-                createMessage(botMessage, false);  // Display bot's response
+                if (botMessage) {
+                    createMessage(botMessage, false);  // Display bot's response
+                } else {
+                    createMessage("No answer available. Please try again.", false);
+                }
             } catch (error) {
                 console.error("Connection error:", error);
                 removeLoadingMessage();
-                createMessage("Sorry, there was an error connecting to the server.", false);
+                createMessage("Sorry, there was an error connecting to the server. Check console for details.", false);
             }
         }
 

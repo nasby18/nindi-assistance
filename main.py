@@ -15,12 +15,11 @@ app = FastAPI()
 # Configure CORS to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],  # Allow all origins for testing; specify domains in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 # Logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -56,8 +55,48 @@ predefined_answers = {
             "- **Kiolesura cha Mtumiaji**: Hii inaruhusu watumiaji kuingiliana na mifumo ya IoT, kawaida kupitia programu za simu au wavuti."
         ),
     },
-    # Add more questions and answers here...
+    "What are some applications of IoT?": {
+        "english": (
+            "Applications of IoT include:\n"
+            "- **Smart Homes**: IoT devices can control lighting, temperature, and security systems.\n"
+            "- **Healthcare**: Wearable devices monitor patient health in real-time.\n"
+            "- **Agriculture**: Sensors monitor soil quality and crop growth.\n"
+            "- **Industrial Automation**: Machines and equipment are monitored for performance and maintenance needs."
+        ),
+        "swahili": (
+            "Matumizi ya IoT ni pamoja na:\n"
+            "- **Nyumba za Kisasa**: Vifaa vya IoT vinaweza kudhibiti mwanga, joto, na mifumo ya usalama.\n"
+            "- **Afya**: Vifaa vya kuvaa hufuatilia afya ya mgonjwa kwa wakati halisi.\n"
+            "- **Kilimo**: Vihisio hufuatilia ubora wa udongo na ukuaji wa mazao.\n"
+            "- **Automatiki za Viwanda**: Mashine na vifaa hufuatiliwa kwa utendaji na mahitaji ya matengenezo."
+        ),
+    },
+    "How does IoT improve healthcare?": {
+        "english": (
+            "IoT improves healthcare by enabling remote patient monitoring, allowing doctors to track vital signs in real-time. "
+            "This includes devices like heart rate monitors and glucose sensors. IoT also helps in inventory management for hospitals "
+            "and improves patient care through data analytics."
+        ),
+        "swahili": (
+            "IoT inaboresha huduma za afya kwa kuwezesha ufuatiliaji wa wagonjwa kwa mbali, kuruhusu madaktari kufuatilia alama za uhai kwa wakati halisi. "
+            "Hii inajumuisha vifaa kama vihisio vya mapigo ya moyo na sukari. IoT pia husaidia katika usimamizi wa vifaa hospitalini "
+            "na kuboresha huduma kwa wagonjwa kupitia uchambuzi wa data."
+        ),
+    },
+    "What are the security challenges in IoT?": {
+        "english": (
+            "Security challenges in IoT include data privacy, as devices often collect sensitive information. "
+            "Network security is also crucial, as IoT devices can be vulnerable to cyber-attacks. Additionally, "
+            "securing IoT devices physically and ensuring firmware updates are applied are key to protecting these devices."
+        ),
+        "swahili": (
+            "Changamoto za usalama katika IoT ni pamoja na faragha ya data, kwani vifaa mara nyingi hukusanya taarifa nyeti. "
+            "Usalama wa mtandao pia ni muhimu, kwani vifaa vya IoT vinaweza kuwa katika hatari ya kushambuliwa na wadukuzi. "
+            "Pia, kulinda vifaa vya IoT kimwili na kuhakikisha masasisho ya programu yanatumika ni muhimu katika kuyakinga."
+        ),
+    },
 }
+
 
 @app.get("/")
 def read_root():
@@ -97,7 +136,7 @@ def get_chatbot_response(input_text):
                 "answer_swahili": swahili_response
             }
         else:
-            logger.warning("Unexpected response format from GPT model")
+            logger.warning(f"Unexpected response format from GPT model: {response_data}")
             return {
                 "answer_english": "I'm not sure how to respond.",
                 "answer_swahili": "Samahani, sijaelewa jinsi ya kujibu."
@@ -120,6 +159,7 @@ def translate_to_swahili(text):
 def chatbot_endpoint(request: ChatRequest):
     try:
         # Fetch response for the question
+        logger.info(f"Received question: {request.question}")
         answers = get_chatbot_response(request.question)
         return answers
     except Exception as e:
