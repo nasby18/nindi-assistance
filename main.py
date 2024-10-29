@@ -15,11 +15,12 @@ app = FastAPI()
 # Configure CORS to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://nindi-assistance.onrender.com"],  # Allow all origins for testing; specify domains in production
+    allow_origins=["*"],  # Allows all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Logging configuration
 logging.basicConfig(level=logging.INFO)
