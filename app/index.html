@@ -70,6 +70,12 @@
             align-self: flex-start;
         }
 
+        /* Loading message styling */
+        .loading-message {
+            color: #6b7280;
+            font-style: italic;
+        }
+
         /* Input area styling */
         .chat-input {
             display: flex;
@@ -108,25 +114,36 @@
         <div class="chat-header">Nindi Assistance</div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Type a message...">
+            <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
-        // Correct backend URL for chatbot endpoint
         const backendUrl = "https://nindi-assistance.onrender.com/chatbot";
 
         // Function to create message bubbles
-        function createMessage(text, isUser = false) {
+        function createMessage(text, isUser = false, isLoading = false) {
             const message = document.createElement("div");
             message.classList.add("message");
             message.classList.add(isUser ? "user-message" : "bot-message");
-            message.textContent = text;
-            document.getElementById("chat-messages").appendChild(message);
+            
+            if (isLoading) {
+                message.classList.add("loading-message");
+                message.textContent = "Typing...";
+                message.setAttribute("id", "loading");
+            } else {
+                message.textContent = text;
+            }
 
-            // Scroll to the bottom for new messages
+            document.getElementById("chat-messages").appendChild(message);
             document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
+        }
+
+        // Function to remove loading message
+        function removeLoadingMessage() {
+            const loadingMessage = document.getElementById("loading");
+            if (loadingMessage) loadingMessage.remove();
         }
 
         // Function to send a message to the backend
@@ -134,16 +151,13 @@
             const userInput = document.getElementById("user-input");
             const userMessage = userInput.value.trim();
 
-            // Check if input is empty
             if (!userMessage) return;
 
-            // Display the user's message in the chat
-            createMessage(userMessage, true);
+            createMessage(userMessage, true);  // Display user's message
+            userInput.value = "";  // Clear input field
 
-            // Clear input field
-            userInput.value = "";
+            createMessage("", false, true);  // Display loading message
 
-            // Send the message to the backend
             try {
                 const response = await fetch(backendUrl, {
                     method: "POST",
@@ -153,14 +167,19 @@
                     body: JSON.stringify({ question: userMessage })
                 });
 
-                // Get the response data from the backend
+                removeLoadingMessage();  // Remove loading indicator
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
                 const data = await response.json();
                 const botMessage = data.answer || "I'm sorry, I couldn't understand that.";
 
-                // Display the bot's response
-                createMessage(botMessage, false);
+                createMessage(botMessage, false);  // Display bot's response
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Connection error:", error);
+                removeLoadingMessage();
                 createMessage("Sorry, there was an error connecting to the server.", false);
             }
         }

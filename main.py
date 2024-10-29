@@ -31,11 +31,12 @@ app = FastAPI()
 # Configure CORS to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins for simplicity; can be restricted to specific origins if needed
+    allow_origins=["https://nindi-assistance.onrender.com"],  # Explicitly set the origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/")
 def read_root():
